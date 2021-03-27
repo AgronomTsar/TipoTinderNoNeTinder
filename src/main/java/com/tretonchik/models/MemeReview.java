@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 @DatabaseTable(tableName="MemeReview")
-public class MemeReview {
+public class MemeReview implements Model<Integer> {
     @DatabaseField(foreign=true, foreignAutoRefresh = true)
     Meme memeId;
     @DatabaseField(foreign=true, foreignAutoRefresh = true)
@@ -18,7 +18,6 @@ public class MemeReview {
     @DatabaseField
     private String rating;
     public MemeReview(){
-
     }
     public MemeReview(Meme memeId, User userId, LocalDate date, String rating) {
         this.memeId = memeId;

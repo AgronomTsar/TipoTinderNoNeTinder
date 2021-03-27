@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 @DatabaseTable(tableName="Meme")
-public class Meme {
+public class Meme implements Model<Integer>{
     @DatabaseField(columnName = "id",id=true)
     private int id;
     @DatabaseField

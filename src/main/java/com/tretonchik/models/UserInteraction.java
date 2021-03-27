@@ -5,7 +5,7 @@ import com.j256.ormlite.field.DatabaseField;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class UserInteraction {
+public class UserInteraction implements Model<Integer> {
     @DatabaseField(foreign=true, foreignAutoRefresh = true)
     User source;
     @DatabaseField(foreign=true, foreignAutoRefresh = true)
