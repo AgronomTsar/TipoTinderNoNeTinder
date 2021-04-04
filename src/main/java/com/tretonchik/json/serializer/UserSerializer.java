@@ -21,7 +21,7 @@ public class UserSerializer extends StdSerializer<User> {
         gen.writeStringField("lname",user.getLname());
         DateTimeFormatter f=DateTimeFormatter.ofPattern("dd-MMM-yyyy");
         gen.writeStringField("birthday",user.getBirthday().format(f));
-        gen.writeStringField("role",user.getRole());
+        gen.writeStringField("role",user.getRole().toString());
         gen.writeStringField("sex",user.getSex());
         gen.writeStringField("country",user.getCountry());
         gen.writeStringField("city",user.getCity());

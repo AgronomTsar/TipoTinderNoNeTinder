@@ -21,7 +21,7 @@ public class MemeReviewSerializer extends StdSerializer<MemeReview> {
         gen.writeNumberField("meme",memeReview.getMemeId().getId());
         DateTimeFormatter f=DateTimeFormatter.ofPattern("dd-MMM-yyyy");
         gen.writeStringField("date",memeReview.getDate().format(f));
-        gen.writeStringField("rate",memeReview.getRating());
+        gen.writeStringField("rate",memeReview.getRating().toString());
         gen.writeEndObject();
     }
 }

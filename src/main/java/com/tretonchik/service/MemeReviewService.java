@@ -1,4 +1,4 @@
-package com.tretonchik.Service;
+package com.tretonchik.service;
 
 import com.j256.ormlite.dao.Dao;
 import com.tretonchik.models.MemeReview;

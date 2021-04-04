@@ -1,11 +1,11 @@
 package com.tretonchik.models;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
-
 import java.time.LocalDate;
 import java.util.Objects;
-
 public class UserInteraction implements Model<Integer> {
+    @DatabaseField(columnName = "id",id=true)
+    int id;
     @DatabaseField(foreign=true, foreignAutoRefresh = true)
     User source;
     @DatabaseField(foreign=true, foreignAutoRefresh = true)
@@ -65,9 +65,18 @@ public class UserInteraction implements Model<Integer> {
                 Objects.equals(reaction, that.reaction) &&
                 Objects.equals(date, that.date);
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(source, target, reaction, date);
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.id=id;
+    }
+
+    @Override
+    public Integer getId() {
+        return this.id;
     }
 }

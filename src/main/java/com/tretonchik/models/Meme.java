@@ -23,12 +23,13 @@ public class Meme implements Model<Integer>{
         this.date = date;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
+    @Override
+    public void setId(Integer id) {
         this.id = id;
+    }
+    @Override
+    public Integer getId() {
+        return id;
     }
 
     public String getLink() {

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.tretonchik.models.User;
+import com.tretonchik.models.UserRole;
 import org.mindrot.jbcrypt.BCrypt;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -31,6 +32,13 @@ public class UserDeserializer extends StdDeserializer<User> {
         String date=root.get("date").asText();
         LocalDate dateNew=LocalDate.parse(date,f);
         String role= root.get("role").asText();
-        return new User(id,fname,lname,bday,role,sex,country,city,phone,dateNew,password);
+        UserRole userRole=null;
+        if(role.equals("ADMIN")){
+            userRole= UserRole.ADMIN;
+        }
+        else {
+            userRole=UserRole.USER;
+        }
+        return new User(id,fname,lname,bday,userRole,sex,country,city,phone,dateNew,hashed);
     }
 }

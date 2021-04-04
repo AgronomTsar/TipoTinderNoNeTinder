@@ -1,17 +1,12 @@
-package com.tretonchik.Service;
+package com.tretonchik.service;
 
 import com.j256.ormlite.dao.Dao;
 import com.tretonchik.models.Model;
-import org.omg.CORBA.portable.ApplicationException;
-import org.sqlite.date.ExceptionUtils;
 
 import java.sql.SQLException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.SQLException;
-import java.util.List;
 
 public abstract class AbstractService<T extends Model<U>, U> implements Service<T, U>  {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractService.class);
@@ -29,14 +24,15 @@ public abstract class AbstractService<T extends Model<U>, U> implements Service<
     }
 
     @Override
-    public List<T> findAll() {
-        try {
-            List<T> result =  dao.queryForAll();
+    public List<T> findAll() throws SQLException {
+//        try {
+          List<T> result =  dao.queryForAll();
             LOGGER.debug("Found result={} by querying all records", result);
             return result;
-        } catch (SQLException throwables) {
-            return null;
-        }
+//        } catch (SQLException throwables) {
+//            System.out.println("here");
+//            return null;
+//        }
     }
 
     @Override

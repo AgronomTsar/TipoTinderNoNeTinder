@@ -18,7 +18,7 @@ public class User implements Model<Integer>{
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private LocalDate birthday;
     @DatabaseField
-    private String role;
+    private UserRole role;
     @DatabaseField
     private String sex;
     @DatabaseField
@@ -35,7 +35,7 @@ public class User implements Model<Integer>{
     }
 
     public User(int id, String fname, String lname, LocalDate birthday,
-                String role, String sex, String country, String city, String phone, LocalDate date,String password) {
+                UserRole role, String sex, String country, String city, String phone, LocalDate date,String password) {
         this.id = id;
         this.fname = fname;
         this.lname = lname;
@@ -80,13 +80,16 @@ public class User implements Model<Integer>{
         return Objects.hash(id, fname, lname, birthday, role, sex, country, city, phone, date, password);
     }
 
-    public int getId() {
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    @Override
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getFname() {
         return fname;
@@ -112,11 +115,10 @@ public class User implements Model<Integer>{
         this.birthday = birthday;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
-
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 
