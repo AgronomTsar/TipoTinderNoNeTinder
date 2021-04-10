@@ -25,6 +25,7 @@ public class UserInteractionDeserializer extends StdDeserializer<UserInteraction
     @Override
     public UserInteraction deserialize(JsonParser parser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
         JsonNode root=parser.getCodec().readTree(parser);
+        int id=root.get("id").asInt();
         int source=root.get("source").asInt();
         int target=root.get("target").asInt();
         String reaction=root.get("reaction").asText();
@@ -32,7 +33,7 @@ public class UserInteractionDeserializer extends StdDeserializer<UserInteraction
         DateTimeFormatter f=DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate dateNew=LocalDate.parse(date,f);
         try {
-            return new UserInteraction(daoUser.queryForId(source),daoUser.queryForId(target),reaction,dateNew);
+            return new UserInteraction(daoUser.queryForId(source),daoUser.queryForId(target),reaction,dateNew,id);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             return null;

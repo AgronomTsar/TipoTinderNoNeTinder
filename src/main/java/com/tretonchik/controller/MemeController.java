@@ -1,6 +1,7 @@
 package com.tretonchik.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.j256.ormlite.dao.Dao;
 import com.tretonchik.models.Meme;
 import com.tretonchik.models.User;
 import com.tretonchik.service.Service;
@@ -8,8 +9,8 @@ import io.javalin.http.Context;
 
 public class MemeController extends AuthorizedController<Meme, Integer>{
 
-    public MemeController(Service<Meme, Integer> service, ObjectMapper objectMapper) {
-        super(service, objectMapper, Meme.class);
+    public MemeController(Service<Meme, Integer> service, ObjectMapper objectMapper, Dao<User,Integer> userDao) {
+        super(service, objectMapper, Meme.class,userDao);
     }
 
     @Override

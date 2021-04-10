@@ -31,9 +31,13 @@ public class Main {
             String login = context.basicAuthCredentials().getUsername();
             String password = context.basicAuthCredentials().getPassword();
             User actor = userService.findByColumnUnique("fname", login);
-            if (BCrypt.checkpw(password, actor.getPassword())) {
+            if(login==null&&password==null){
+                return UserRole.USER;
+            }
+            else if (BCrypt.checkpw(password, actor.getPassword())&&login!=null&&password!=null) {
                 return actor.getRole();
-            } else {
+            }
+            else {
                 throw new UnauthorizedResponse();
             }
         } else {
@@ -46,7 +50,9 @@ public class Main {
         Service<User, Integer> userService=new UserService(DaoManager.createDao(configuration.connectionSource(),User.class),
                 DaoManager.createDao(configuration.connectionSource(),Meme.class),DaoManager.createDao(configuration.connectionSource(),MemeReview.class));
         Service<MemeReview, Integer> memeReviewService=new MemeReviewService(DaoManager.createDao(configuration.connectionSource(),MemeReview.class));
-        Service<UserInteraction, Integer> userInteractionService=new UserInteractionService(DaoManager.createDao(configuration.connectionSource(),UserInteraction.class));
+        Service<UserInteraction, Integer> userInteractionService=new UserInteractionService(DaoManager.createDao(configuration.connectionSource(),UserInteraction.class),
+                DaoManager.createDao(configuration.connectionSource(),MemeReview.class),DaoManager.createDao(configuration.connectionSource(),User.class)
+                );// создать один раз потом наспамить если время будет
         ReactionOperations reactionOperations=new ReactionOperations();
         ObjectMapper objectMapper = new ObjectMapper()
                 .registerModule(
@@ -64,9 +70,10 @@ public class Main {
                 );
 //        Controller<User, Integer> userController = new UserController(userService, objectMapper,DaoManager.createDao(configuration.connectionSource(),Meme.class),
 //                DaoManager.createDao(configuration.connectionSource(),User.class));
-        Controller<Meme, Integer> memeController = new MemeController(memeService, objectMapper);
-        Controller<MemeReview, Integer> memeReviewController = new MemeReviewController(memeReviewService, objectMapper);
-        Controller<UserInteraction, Integer> userInteractionController = new UserInteractionController(userInteractionService, objectMapper);
+        Dao<User,Integer> userDao=DaoManager.createDao(configuration.connectionSource(),User.class);
+        Controller<Meme, Integer> memeController = new MemeController(memeService, objectMapper,userDao);
+        MemeReviewController memeReviewController = new MemeReviewController(memeReviewService,objectMapper,userDao);
+        UserInteractionController userInteractionController = new UserInteractionController(userInteractionService, objectMapper,DaoManager.createDao(configuration.connectionSource(),User.class));
         UserController userController= new UserController(userService, objectMapper,DaoManager.createDao(configuration.connectionSource(),Meme.class),
                DaoManager.createDao(configuration.connectionSource(),User.class),reactionOperations);
         Javalin app = Javalin.create(javalinConfig -> {
@@ -85,7 +92,7 @@ public class Main {
         app.routes(() -> {
             path("users", () -> {
                 get(userController::getAll, roles(UserRole.ADMIN));
-                post(userController::postOne, roles((UserRole.USER)));
+                post(userController::postOne,roles(UserRole.USER));
                 path(":id", () -> {
                     get((ctx) -> userController.getOne(ctx, ctx.pathParam("id", Integer.class).get()), roles(UserRole.USER, UserRole.ADMIN));
                     patch((ctx) -> userController.patchOne(ctx, ctx.pathParam("id", Integer.class).get()), roles(UserRole.USER, UserRole.ADMIN));
@@ -101,7 +108,7 @@ public class Main {
             });
             path("memeReview", () -> {
                 get(memeReviewController::getAll, roles(UserRole.ADMIN));
-                post(memeReviewController::postOne, roles((UserRole.USER)));
+                post(memeReviewController::postOne, roles(UserRole.USER));
                 path(":memeId",()->{
                     path(":reaction",()->{
                         post((ctx)->userController.MemeReactionSetter(ctx),roles(UserRole.USER));
@@ -110,8 +117,14 @@ public class Main {
             });
             path("userInteraction", () -> {
                 get(userInteractionController::getAll, roles(UserRole.ADMIN));
-                post(userInteractionController::postOne, roles((UserRole.USER)));
+                post(userInteractionController::postOne, roles(UserRole.USER));
+                path("matches",()->{
+                   path("size",()->{
+                       get((ctx)->userInteractionController.MatchesFinder(ctx));
+                   });
+                });
             });
         }).start(8080);
+
     }
 }

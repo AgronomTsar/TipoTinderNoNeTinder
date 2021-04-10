@@ -16,11 +16,12 @@ public class UserInteraction implements Model<Integer> {
     private LocalDate date;
     public UserInteraction(){
     }
-    public UserInteraction(User source, User target, String reaction, LocalDate date) {
+    public UserInteraction(User source, User target, String reaction, LocalDate date,int id) {
         this.source = source;
         this.target = target;
         this.reaction = reaction;
         this.date = date;
+        this.id=id;
     }
 
     public User getSource() {

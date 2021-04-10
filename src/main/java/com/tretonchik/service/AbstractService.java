@@ -5,6 +5,8 @@ import com.tretonchik.models.Model;
 
 import java.sql.SQLException;
 import java.util.List;
+
+import com.tretonchik.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,4 +107,5 @@ public abstract class AbstractService<T extends Model<U>, U> implements Service<
             return null;
         }
     }
+
 }

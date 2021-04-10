@@ -46,7 +46,7 @@ public abstract class AbstractController<T extends Model<U>, U> implements Contr
     }
 
     @Override
-    public void getOne(Context context, U id) {
+    public void getOne(Context context, U id) throws SQLException {
         Model<U> model = service.findById(id);
         try {
             context.result(objectMapper.writeValueAsString(model));
@@ -66,7 +66,7 @@ public abstract class AbstractController<T extends Model<U>, U> implements Contr
     }
 
     @Override
-    public void postOne(Context context) {
+    public void postOne(Context context) throws SQLException {
         try {
             T model = objectMapper.readValue(context.body(), modelClass);
             service.save(model);
@@ -77,7 +77,7 @@ public abstract class AbstractController<T extends Model<U>, U> implements Contr
     }
 
     @Override
-    public void patchOne(Context context, U id) {
+    public void patchOne(Context context, U id) throws SQLException {
         try {
             T model = objectMapper.readValue(context.body(), modelClass);
             model.setId(id);
@@ -88,7 +88,7 @@ public abstract class AbstractController<T extends Model<U>, U> implements Contr
     }
 
     @Override
-    public void deleteOne(Context context, U id) {
+    public void deleteOne(Context context, U id) throws SQLException {
         service.deleteById(id);
         context.status(204);
     }
