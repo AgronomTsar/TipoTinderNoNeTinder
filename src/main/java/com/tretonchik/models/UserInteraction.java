@@ -6,9 +6,9 @@ import java.util.Objects;
 public class UserInteraction implements Model<Integer> {
     @DatabaseField(columnName = "id",id=true)
     int id;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true)
+    @DatabaseField(foreign=true, foreignAutoRefresh = true,columnName ="source")
     User source;
-    @DatabaseField(foreign=true, foreignAutoRefresh = true)
+    @DatabaseField(foreign=true, foreignAutoRefresh = true,columnName = "target")
     User target;
     @DatabaseField
     private String reaction;

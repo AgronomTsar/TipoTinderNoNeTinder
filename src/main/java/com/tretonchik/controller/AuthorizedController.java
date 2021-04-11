@@ -49,6 +49,7 @@ public abstract class AuthorizedController<T extends Model<U>, U> extends Abstra
         if (isAuthorized(context)) {
             super.getOne(context, id);
         } else {
+            System.out.println("here getOne");
             throw new ForbiddenResponse();
         }
     }

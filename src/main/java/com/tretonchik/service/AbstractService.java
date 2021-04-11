@@ -101,6 +101,7 @@ public abstract class AbstractService<T extends Model<U>, U> implements Service<
     public <V> T findByColumnUnique(String columnName, V columnValue) {
         try {
             T result = dao.queryBuilder().where().eq(columnName, columnValue).queryForFirst();
+            System.out.println(result.getId());
             LOGGER.debug("Found unique result {} by searching column={} equals value={}", result, columnName, columnValue);
             return result;
         } catch (SQLException throwables) {

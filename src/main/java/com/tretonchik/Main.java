@@ -52,7 +52,7 @@ public class Main {
         Service<MemeReview, Integer> memeReviewService=new MemeReviewService(DaoManager.createDao(configuration.connectionSource(),MemeReview.class));
         Service<UserInteraction, Integer> userInteractionService=new UserInteractionService(DaoManager.createDao(configuration.connectionSource(),UserInteraction.class),
                 DaoManager.createDao(configuration.connectionSource(),MemeReview.class),DaoManager.createDao(configuration.connectionSource(),User.class)
-                );// создать один раз потом наспамить если время будет
+                );
         ReactionOperations reactionOperations=new ReactionOperations();
         ObjectMapper objectMapper = new ObjectMapper()
                 .registerModule(
@@ -71,9 +71,9 @@ public class Main {
 //        Controller<User, Integer> userController = new UserController(userService, objectMapper,DaoManager.createDao(configuration.connectionSource(),Meme.class),
 //                DaoManager.createDao(configuration.connectionSource(),User.class));
         Dao<User,Integer> userDao=DaoManager.createDao(configuration.connectionSource(),User.class);
-        Controller<Meme, Integer> memeController = new MemeController(memeService, objectMapper,userDao);
+        Controller<Meme, Integer> memeController = new MemeController(memeService, objectMapper,userDao,userService);
         MemeReviewController memeReviewController = new MemeReviewController(memeReviewService,objectMapper,userDao);
-        UserInteractionController userInteractionController = new UserInteractionController(userInteractionService, objectMapper,DaoManager.createDao(configuration.connectionSource(),User.class));
+        UserInteractionController userInteractionController = new UserInteractionController(userInteractionService, objectMapper,DaoManager.createDao(configuration.connectionSource(),User.class),userService);
         UserController userController= new UserController(userService, objectMapper,DaoManager.createDao(configuration.connectionSource(),Meme.class),
                DaoManager.createDao(configuration.connectionSource(),User.class),reactionOperations);
         Javalin app = Javalin.create(javalinConfig -> {
@@ -85,6 +85,7 @@ public class Main {
                 if (set.contains(userRole)) {
                     handler.handle(context);
                 } else {
+                    System.out.println("Here MAin");
                     throw new ForbiddenResponse();
                 }
             });
@@ -101,7 +102,7 @@ public class Main {
             });
             path("meme", () -> {
                 get(memeController::getAll, roles(UserRole.ADMIN));
-                post(memeController::postOne, roles((UserRole.USER)));
+                post(memeController::postOne, roles(UserRole.USER));
                 path(":size", () -> {
                     get((ctx)->userController.UserMemeGetter(ctx),roles((UserRole.USER)));
                 });
@@ -118,13 +119,10 @@ public class Main {
             path("userInteraction", () -> {
                 get(userInteractionController::getAll, roles(UserRole.ADMIN));
                 post(userInteractionController::postOne, roles(UserRole.USER));
-                path("matches",()->{
-                   path("size",()->{
-                       get((ctx)->userInteractionController.MatchesFinder(ctx));
+                   path(":size",()->{
+                       get((ctx)->userInteractionController.MatchesFinder(ctx),roles(UserRole.USER));
                    });
-                });
             });
         }).start(8080);
-
     }
 }

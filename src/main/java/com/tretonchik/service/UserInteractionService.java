@@ -25,10 +25,14 @@ public class UserInteractionService extends AbstractService<UserInteraction,Inte
         List<User> finalTargets=userInteractionMatchesFinder(user,targets);
         if(finalTargets.size()<size&&targets.size()>size){
             List<User> newList=MatchesByMemesFinder(user,memesId,size,targets,finalTargets.size());
-            for(int i=0;i<newList.size();i++){
-                finalTargets.add(newList.get(i));
+            if(newList.size()!=0){
+                for(int i=0;i<size-finalTargets.size();i++){
+                    finalTargets.add(newList.get(i));
+                }
             }
-            return finalTargets;
+            else {
+                return finalTargets;
+            }
         }
         else if(targets.size()<size){
             for(int i=0;i<targets.size();i++){
@@ -39,6 +43,7 @@ public class UserInteractionService extends AbstractService<UserInteraction,Inte
         else {
             return finalTargets;
         }
+        return finalTargets;
     }
 //    public Boolean CityChecker(User source, User target){
 //        if(source.getCity().equals(target.getCity())){
@@ -65,10 +70,10 @@ public class UserInteractionService extends AbstractService<UserInteraction,Inte
 //    }
     public List<User> sameCityUserFinder(User user) throws SQLException {
         if(user.getSex().equals("Male")){
-            return (List<User>) userDao.queryBuilder().where().eq("city",user.getCity()).eq("sex","Female").queryForFirst();
+            return (List<User>) userDao.queryBuilder().where().eq("city",user.getCity()).and().eq("sex","Female").query();
         }
         else{
-            return (List<User>) userDao.queryBuilder().where().eq("city",user.getCity()).eq("sex","Male").queryForFirst();
+            return (List<User>) userDao.queryBuilder().where().eq("city",user.getCity()).and().eq("sex","Male").query();
         }
     }
    public List<Meme> memesSourceUserFinder(User user) throws SQLException {
@@ -99,7 +104,7 @@ public class UserInteractionService extends AbstractService<UserInteraction,Inte
             memesLikedAmount.add(i,matchCounter);
             matchCounter=0;
         }
-        return  appropriateUserSelector(tempTargets,appropriateMatchesSelector(memesLikedAmount,size-currentSize));
+        return tempTargets;
     }
     public List<User> appropriateUserSelector(List<User> usersList,List<Integer> indexList){
         List<User> finalTargets=new ArrayList<>();
@@ -108,18 +113,13 @@ public class UserInteractionService extends AbstractService<UserInteraction,Inte
         }
         return finalTargets;
     }
-    public List<Integer> appropriateMatchesSelector(List<Integer> countList,int needSize){
+    public List<Integer> appropriateMatchesSelector(List<User> countList,int needSize){
         int triesCounter=0;
         int max=0;
         int currentIndex=0;
         List<Integer> selectedMemes=new ArrayList<>();
         while(triesCounter<needSize){
-            for(int i=0;i<countList.size();i++){
-                if(countList.get(i)>=max){
-                    max=countList.get(i);
-                    currentIndex=i;
-                }
-            }
+            
             selectedMemes.add(currentIndex,max);
             triesCounter++;
             countList.remove(currentIndex);
@@ -129,7 +129,7 @@ public class UserInteractionService extends AbstractService<UserInteraction,Inte
     public List<User> userInteractionMatchesFinder(User source,List<User> targets) throws SQLException {
         List<User> likedTargets=new ArrayList<>();
         for(int i=0;i<targets.size();i++){
-        UserInteraction userInteraction=userInteractionsDao.queryBuilder().where().eq("source",targets.get(i)).eq("target",source).queryForFirst();
+        UserInteraction userInteraction=userInteractionsDao.queryBuilder().where().eq("source",targets.get(i)).and().eq("target",source).queryForFirst();
             if(userInteraction!=null&& userInteraction.getReaction().equals(Reactions.LIKED.toString())){
                 likedTargets.add(targets.get(i));
             }

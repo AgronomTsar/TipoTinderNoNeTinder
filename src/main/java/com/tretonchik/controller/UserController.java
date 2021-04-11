@@ -11,10 +11,9 @@ import com.tretonchik.service.Service;
 import com.tretonchik.service.UserService;
 import io.javalin.http.Context;
 import org.omg.CORBA.portable.ApplicationException;
-
 import java.sql.SQLException;
+public class UserController extends AuthorizedController<User,Integer>{
 
-public class UserController extends AbstractController<User,Integer>{
     private final Dao<Meme,Integer> memeDao;
     private final Dao<User,Integer> userDao;
     private final UserService userService;
@@ -22,16 +21,19 @@ public class UserController extends AbstractController<User,Integer>{
     private final ReactionOperations reactionOperations;
     public UserController(Service<User, Integer> service, ObjectMapper objectMapper,
                           Dao<Meme,Integer> memeDao,Dao<User,Integer> userDao,ReactionOperations reactionOperations) {
-        super(service, objectMapper, User.class);
+        super(service,objectMapper, User.class,userDao);
         this.memeDao=memeDao;
         this.userDao=userDao;
         this.userService= (UserService) service;
         this.objectMapper=objectMapper;
         this.reactionOperations=reactionOperations;
     }
+
+    @Override
     public Service<User, Integer> userService() {
         return getService();
     }
+    @Override
     boolean isAuthorized(User user, Context context) {
         if (user.getRole() ==UserRole.ADMIN) {
             return true;
