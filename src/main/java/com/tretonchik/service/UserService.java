@@ -7,12 +7,13 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 public class UserService extends AbstractService<User,Integer> {
     private final Dao<Meme, Integer> memeDao;
     private final Dao<MemeReview, Integer> memeReviewDao;
     private final Dao<User, Integer> userDao;
-
+    private final int COOL_DOWN=1;
     public UserService(Dao<User, Integer> dao, Dao<Meme, Integer> memeDao,
                        Dao<MemeReview, Integer> memeReviewDao) {
         super(dao);
@@ -61,10 +62,12 @@ public class UserService extends AbstractService<User,Integer> {
             return memeList;
         }
         public MemeReview MemeReviewReturner (Meme memeId, User userId,int id){
-            String date = "03-04-2021";
-            DateTimeFormatter f = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            LocalDate dateNew = LocalDate.parse(date, f);
-            return new MemeReview(id, memeId, userId, dateNew, Reactions.WATCHED.toString());
+//
+//            String date = "03-04-2021";
+//            DateTimeFormatter f = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+//            LocalDate dateNew = LocalDate.parse(date,f);
+            LocalDate localDate=LocalDate.now();
+            return new MemeReview(id, memeId, userId, localDate, Reactions.WATCHED.toString());
         }
         public MemeReview MemeReviewFinder(int memeId,int userId) throws SQLException {
             for(int i=1;i<=memeReviewDao.queryForAll().size();i++){
@@ -80,9 +83,34 @@ public class UserService extends AbstractService<User,Integer> {
                 memeReviewDao.update(memeReview);
                 return memeReview;
         }
-        //сделать чтобы получал 20 мемов
-        //чтоб они потом не повторялись
-        //на время пока забить
-        //потом сделать матчи
+        public LocalDate lastSessionTimeGetter(int userId,LocalDate localDateNow) throws SQLException {
+            List<MemeReview> memeReviews=memeReviewDao.queryForEq("userId",userId);
+            int max=ZERO;
+            for(int i=ZERO;i<memeReviews.size();i++){
+                MemeReview memeReviewCurrent=memeReviews.get(i);
+                LocalDate localDateCurrent=memeReviewCurrent.getDate();
+                if(localDateCurrent==localDateNow){
+                    return localDateCurrent;
+                }
+                else if(i==ZERO){
+                    max=i;
+                }
+                else if(localDateCurrent.getYear()==memeReviews.get(max).getDate().getYear()){
+                    if(localDateCurrent.getDayOfYear()>=memeReviews.get(max).getDate().getDayOfYear()){
+                        max=i;
+                    }
+                }
+                else if(localDateCurrent.getYear()>memeReviews.get(max).getDate().getYear()){
+                    max=i;
+                }
+            }
+            if(memeReviews.size()==0){
+                return null;
+            }
+            else {
+                return memeReviews.get(max).getDate();
+            }
+        }
+        private  final int ZERO=0;
 
 }

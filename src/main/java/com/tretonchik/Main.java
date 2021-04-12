@@ -23,6 +23,10 @@ import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
 import org.mindrot.jbcrypt.BCrypt;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+
 import static io.javalin.apibuilder.ApiBuilder.*;
 import static io.javalin.core.security.SecurityUtil.roles;
 public class Main {
@@ -85,7 +89,6 @@ public class Main {
                 if (set.contains(userRole)) {
                     handler.handle(context);
                 } else {
-                    System.out.println("Here MAin");
                     throw new ForbiddenResponse();
                 }
             });
@@ -124,5 +127,10 @@ public class Main {
                    });
             });
         }).start(8080);
+//        LocalDate localDate=LocalDate.now();
+//        System.out.println(localDate);
+//        UserService userService1=new UserService(DaoManager.createDao(configuration.connectionSource(),User.class),
+//                DaoManager.createDao(configuration.connectionSource(),Meme.class),DaoManager.createDao(configuration.connectionSource(),MemeReview.class));
+//        System.out.println(userService1.lastSessionTimeGetter(1,localDate));
     }
 }

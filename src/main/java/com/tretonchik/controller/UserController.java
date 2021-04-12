@@ -12,6 +12,8 @@ import com.tretonchik.service.UserService;
 import io.javalin.http.Context;
 import org.omg.CORBA.portable.ApplicationException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+
 public class UserController extends AuthorizedController<User,Integer>{
 
     private final Dao<Meme,Integer> memeDao;
@@ -80,8 +82,28 @@ public class UserController extends AuthorizedController<User,Integer>{
         String password=ctx.basicAuthCredentials().getPassword();
         User user=userDao.queryBuilder().where().eq("fname",login).queryForFirst();
         Integer size=ctx.pathParam("size",Integer.class).get();
+        LocalDate localDateNow=LocalDate.now();
+        if(userService.lastSessionTimeGetter(user.getId(),localDateNow)==null){
+            ctx.result(objectMapper.writeValueAsString(userService.UserMemeGetter(size,user.getId())));
+        }
+        else {
+            LocalDate lastSession=userService.lastSessionTimeGetter(user.getId(),localDateNow);
+            if(localDateNow==lastSession){
+                ctx.result("COOL_DOWN BRO");
+            }
+            else if(localDateNow.getYear()==lastSession.getYear()){
+                if(localDateNow.getDayOfYear()-lastSession.getDayOfYear()>=COOL_DOWN){
+                    ctx.result(objectMapper.writeValueAsString(userService.UserMemeGetter(size,user.getId())));
+                }
+                else {
+                    ctx.result("COOL_DOWN BRO");
+                }
+            }
+            else {
+                ctx.result(objectMapper.writeValueAsString(userService.UserMemeGetter(size,user.getId())));
+            }
+        }
 
-        ctx.result(objectMapper.writeValueAsString(userService.UserMemeGetter(size,user.getId())));
     }// function for getting memes depending on chosen size
     public void MemeReactionSetter(Context ctx) throws SQLException, JsonProcessingException {
         String login=ctx.basicAuthCredentials().getUsername();
@@ -92,6 +114,5 @@ public class UserController extends AuthorizedController<User,Integer>{
         Integer memeId=ctx.pathParam("memeId",Integer.class).get();
         ctx.result(objectMapper.writeValueAsString(userService.MemeReviewer(reaction.toString(),memeId,user)));
     }
-
-
+    private final int COOL_DOWN=1;
 }
