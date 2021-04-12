@@ -11,6 +11,7 @@ import com.tretonchik.service.UserInteractionService;
 import io.javalin.http.Context;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class UserInteractionController extends AuthorizedController<UserInteraction,Integer> {
     private final Dao<User,Integer> userDao;
@@ -28,8 +29,29 @@ public class UserInteractionController extends AuthorizedController<UserInteract
     public void MatchesFinder(Context ctx) throws SQLException, JsonProcessingException {
         String login=ctx.basicAuthCredentials().getUsername();
         String password=ctx.basicAuthCredentials().getPassword();
-        User user=userDao.queryBuilder().where().eq("fname",login).queryForFirst();
+        LocalDate localDateNow=LocalDate.now();
         Integer size=ctx.pathParam("size",Integer.class).get();
+        User user=userDao.queryBuilder().where().eq("fname",login).queryForFirst();
+        if(service.lastSessionTimeGetter(user.getId(),localDateNow)==null){
+            ctx.result(objectMapper.writeValueAsString(service.MatchesFinder(user,size)));
+        }
+        else {
+            LocalDate lastSession=service.lastSessionTimeGetter(user.getId(),localDateNow);
+            if(localDateNow==lastSession){
+                ctx.result("COOL_DOWN BRO");
+            }
+            else if(localDateNow.getYear()==lastSession.getYear()){
+                if(localDateNow.getDayOfYear()-lastSession.getDayOfYear()>=COOL_DOWN){
+                    ctx.result(objectMapper.writeValueAsString(service.MatchesFinder(user,size)));
+                }
+                else {
+                    ctx.result("COOL_DOWN BRO");
+                }
+            }
+            else {
+                ctx.result(objectMapper.writeValueAsString(service.MatchesFinder(user,size)));
+            }
+        }
         ctx.result(objectMapper.writeValueAsString(service.MatchesFinder(user,size)));
     }
 
@@ -80,4 +102,5 @@ public class UserInteractionController extends AuthorizedController<UserInteract
             return id.equals(user.getId());
         }
     }
+    private final int COOL_DOWN=1;
 }
