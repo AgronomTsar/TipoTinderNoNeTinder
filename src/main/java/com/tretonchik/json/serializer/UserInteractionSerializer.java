@@ -21,6 +21,7 @@ public class UserInteractionSerializer extends StdSerializer<UserInteraction> {
         gen.writeStringField("reaction",userInteraction.getReaction());
         DateTimeFormatter f=DateTimeFormatter.ofPattern("dd-MMM-yyyy");
         gen.writeStringField("date",userInteraction.getDate().format(f));
+        gen.writeNumberField("id",userInteraction.getId());
         gen.writeEndObject();
     }
 }
