@@ -13,6 +13,15 @@ public class UserInteractionService extends AbstractService<UserInteraction,Inte
     private final Dao<MemeReview, Integer> memeReviewDao;
     private final Dao<User, Integer> userDao;
     private final Dao<UserInteraction, Integer> userInteractionsDao;
+    int ZERO=0;
+    String MEME_ID="memeId";
+    String CITY="city";
+    String SEX="sex";
+    String MALE="Male";
+    String FEMALE="Female";
+    String USER_ID="userId";
+    String SOURCE="source";
+    String TARGET="target";
     public UserInteractionService(Dao<UserInteraction, Integer> dao,Dao<MemeReview, Integer> memeReviewDao,Dao<User, Integer> userDao) {
         super(dao);
         this.memeReviewDao=memeReviewDao;
@@ -21,29 +30,32 @@ public class UserInteractionService extends AbstractService<UserInteraction,Inte
     }
     public List<User> MatchesFinder(User user,int size) throws SQLException {
         int userId=user.getId();
-        List<Meme> memesId=memesSourceUserFinder(user);//all user's liked memes
+        List<Meme> memesId=memesSourceUserFinder(user);
         List<User> targets=sameCityUserFinder(user);
         List<User> finalTargets=userInteractionMatchesFinder(user,targets);
-        if(finalTargets.size()<size&&targets.size()>size){
-            List<User> newList=MatchesByMemesFinder(user,memesId,size,targets,finalTargets.size());
-            if(newList.size()!=0){
-                for(int i=0;i<size-finalTargets.size();i++){
+        if(finalTargets.size()<size){
+            List<User> newList=MatchesByMemesFinder(memesId,targets);
+            if(newList.size()!=ZERO){
+                for(int i=ZERO;i<size-finalTargets.size();i++){
                     finalTargets.add(newList.get(i));
                 }
             }
             else {
+                for(int i=ZERO;i<size-finalTargets.size();i++){
+                    finalTargets.add(targets.get(i));
+                }
                 watchedStatusPutter(finalTargets,user);
                 return finalTargets;
             }
         }
-        else if(targets.size()<size){
-            for(int i=0;i<targets.size();i++){
-                finalTargets.add(targets.get(i));
-            }
+        else if(finalTargets.size()==size){
             watchedStatusPutter(finalTargets,user);
             return finalTargets;
         }
-        else {
+        else if(finalTargets.size()>=size){
+            for(int i=ZERO;i<finalTargets.size()-size;i++){
+                finalTargets.remove(i);
+            }
             watchedStatusPutter(finalTargets,user);
             return finalTargets;
         }
@@ -51,7 +63,7 @@ public class UserInteractionService extends AbstractService<UserInteraction,Inte
         return finalTargets;
     }
     public void watchedStatusPutter(List<User> targets,User source) throws SQLException {
-        for(int i=0;i<targets.size();i++){
+        for(int i=ZERO;i<targets.size();i++){
             userInteractionsDao.create(userInteractionReturner(targets.get(i),source,userInteractionsDao.queryForAll().size()+1));
         }
     }
@@ -60,39 +72,37 @@ public class UserInteractionService extends AbstractService<UserInteraction,Inte
     }
     public List<User> sameCityUserFinder(User user) throws SQLException {
         if(user.getSex().equals("Male")){
-            return (List<User>) userDao.queryBuilder().where().eq("city",user.getCity()).and().eq("sex","Female").query();
+            return (List<User>) userDao.queryBuilder().where().eq(CITY,user.getCity()).and().eq(SEX,FEMALE).query();
         }
         else{
-            return (List<User>) userDao.queryBuilder().where().eq("city",user.getCity()).and().eq("sex","Male").query();
+            return (List<User>) userDao.queryBuilder().where().eq(CITY,user.getCity()).and().eq(SEX,MALE).query();
         }
     }
    public List<Meme> memesSourceUserFinder(User user) throws SQLException {
-        List<MemeReview> memeReviews=memeReviewDao.queryForEq("userId",user.getId());
+        List<MemeReview> memeReviews=memeReviewDao.queryForEq(USER_ID,user.getId());
         List<Meme> meme=new ArrayList<>();
-        for(int i=0;i<memeReviews.size();i++){
+        for(int i=ZERO;i<memeReviews.size();i++){
             if(memeReviews.get(i).getRating().equals(Reactions.LIKED)){
                 meme.add(memeReviews.get(i).getMemeId());
             } }
         return meme;
     }
-    public List<User> MatchesByMemesFinder(User user,List<Meme> memes,int size,List<User> targets,int currentSize) throws SQLException {
-        int matchCounter=0;
-        int counter5=0;
+    public List<User> MatchesByMemesFinder(List<Meme> memes,List<User> targets) throws SQLException {
+        int matchCounter=ZERO;
         List<User> tempTargets=new ArrayList<>();
         List<Integer> memesLikedAmount=new ArrayList<>();
-        int differ=0;
-        for(int i=0;i<targets.size();i++){
-            for(int j=0;j<memes.size();j++){
-                MemeReview memeReview=memeReviewDao.queryBuilder().where().eq("memeId",memes.get(j)).eq("userId",targets.get(i)).queryForFirst();
+        for(int i=ZERO;i<targets.size();i++){
+            for(int j=ZERO;j<memes.size();j++){
+                MemeReview memeReview=memeReviewDao.queryBuilder().where().eq(MEME_ID,memes.get(j)).eq(USER_ID,targets.get(i)).queryForFirst();
                 if(memeReview!=null&&memeReview.getRating().equals(Reactions.LIKED)){
-                    if(matchCounter==0){
+                    if(matchCounter==ZERO){
                         tempTargets.add(i,targets.get(i));
                     }
                     matchCounter++;
                 }
             }
             memesLikedAmount.add(i,matchCounter);
-            matchCounter=0;
+            matchCounter=ZERO;
         }
         return tempTargets;
     }
@@ -118,8 +128,8 @@ public class UserInteractionService extends AbstractService<UserInteraction,Inte
 //    }
     public List<User> userInteractionMatchesFinder(User source,List<User> targets) throws SQLException {
         List<User> likedTargets=new ArrayList<>();
-        for(int i=0;i<targets.size();i++){
-        UserInteraction userInteraction=userInteractionsDao.queryBuilder().where().eq("source",targets.get(i)).and().eq("target",source).queryForFirst();
+        for(int i=ZERO;i<targets.size();i++){
+        UserInteraction userInteraction=userInteractionsDao.queryBuilder().where().eq(SOURCE,targets.get(i)).and().eq(TARGET,source).queryForFirst();
             if(userInteraction!=null&& userInteraction.getReaction().equals(Reactions.LIKED.toString())){
                 likedTargets.add(targets.get(i));
             }
@@ -127,7 +137,7 @@ public class UserInteractionService extends AbstractService<UserInteraction,Inte
         return likedTargets;
     }
     public LocalDate lastSessionTimeGetter(int userId,LocalDate localDateNow) throws SQLException {
-        List<UserInteraction> userInteractions=userInteractionsDao.queryForEq("source",userId);
+        List<UserInteraction> userInteractions=userInteractionsDao.queryForEq(SOURCE,userId);
         int max=ZERO;
         for(int i=ZERO;i<userInteractions.size();i++){
             UserInteraction userInteractionCurrent=userInteractions.get(i);
@@ -147,12 +157,12 @@ public class UserInteractionService extends AbstractService<UserInteraction,Inte
                 max=i;
             }
         }
-        if(userInteractions.size()==0){
+        if(userInteractions.size()==ZERO){
             return null;
         }
         else {
             return userInteractions.get(max).getDate();
         }
     }
-    private  final int ZERO=0;
+
 }

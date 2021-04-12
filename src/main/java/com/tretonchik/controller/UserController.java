@@ -13,7 +13,6 @@ import io.javalin.http.Context;
 import org.omg.CORBA.portable.ApplicationException;
 import java.sql.SQLException;
 import java.time.LocalDate;
-
 public class UserController extends AuthorizedController<User,Integer>{
 
     private final Dao<Meme,Integer> memeDao;
@@ -80,8 +79,8 @@ public class UserController extends AuthorizedController<User,Integer>{
     public void UserMemeGetter(Context ctx) throws SQLException, JsonProcessingException {
         String login=ctx.basicAuthCredentials().getUsername();
         String password=ctx.basicAuthCredentials().getPassword();
-        User user=userDao.queryBuilder().where().eq("fname",login).queryForFirst();
-        Integer size=ctx.pathParam("size",Integer.class).get();
+        User user=userDao.queryBuilder().where().eq(F_NAME,login).queryForFirst();
+        Integer size=ctx.pathParam(SIZE,Integer.class).get();
         LocalDate localDateNow=LocalDate.now();
         if(userService.lastSessionTimeGetter(user.getId(),localDateNow)==null){
             ctx.result(objectMapper.writeValueAsString(userService.UserMemeGetter(size,user.getId())));
@@ -89,14 +88,14 @@ public class UserController extends AuthorizedController<User,Integer>{
         else {
             LocalDate lastSession=userService.lastSessionTimeGetter(user.getId(),localDateNow);
             if(localDateNow==lastSession){
-                ctx.result("COOL_DOWN BRO");
+                ctx.result(COOL_DOWN_SIGN);
             }
             else if(localDateNow.getYear()==lastSession.getYear()){
                 if(localDateNow.getDayOfYear()-lastSession.getDayOfYear()>=COOL_DOWN){
                     ctx.result(objectMapper.writeValueAsString(userService.UserMemeGetter(size,user.getId())));
                 }
                 else {
-                    ctx.result("COOL_DOWN BRO");
+                    ctx.result(COOL_DOWN_SIGN);
                 }
             }
             else {
@@ -108,11 +107,16 @@ public class UserController extends AuthorizedController<User,Integer>{
     public void MemeReactionSetter(Context ctx) throws SQLException, JsonProcessingException {
         String login=ctx.basicAuthCredentials().getUsername();
         String password=ctx.basicAuthCredentials().getPassword();
-        User user=userDao.queryBuilder().where().eq("fname",login).queryForFirst();
-        String rate=ctx.pathParam("reaction",String.class).get();
+        User user=userDao.queryBuilder().where().eq(F_NAME,login).queryForFirst();
+        String rate=ctx.pathParam(REACTION,String.class).get();
         Reactions reaction=reactionOperations.reactionConverter(rate);
-        Integer memeId=ctx.pathParam("memeId",Integer.class).get();
+        Integer memeId=ctx.pathParam(MEME_ID,Integer.class).get();
         ctx.result(objectMapper.writeValueAsString(userService.MemeReviewer(reaction.toString(),memeId,user)));
     }
     private final int COOL_DOWN=1;
+    String F_NAME="fname";
+    String REACTION="reaction";
+    String MEME_ID="memeId";
+    String COOL_DOWN_SIGN="COOL DOWN";
+    String SIZE="size";
 }

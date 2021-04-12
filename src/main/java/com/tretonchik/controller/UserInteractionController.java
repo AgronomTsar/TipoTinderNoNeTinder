@@ -18,6 +18,9 @@ public class UserInteractionController extends AuthorizedController<UserInteract
     private final UserInteractionService service;
     private final ObjectMapper objectMapper;
     private final Service<User, Integer> userService;
+    String SIZE="size";
+    String F_NAME="fname";
+    String COOL_DOWN_SIGN="COOL DOWN";
     public UserInteractionController(Service<UserInteraction, Integer> service, ObjectMapper objectMapper,
                                      Dao<User,Integer> userDao,Service<User, Integer> userService) {
         super(service, objectMapper, UserInteraction.class,userDao);
@@ -30,29 +33,29 @@ public class UserInteractionController extends AuthorizedController<UserInteract
         String login=ctx.basicAuthCredentials().getUsername();
         String password=ctx.basicAuthCredentials().getPassword();
         LocalDate localDateNow=LocalDate.now();
-        Integer size=ctx.pathParam("size",Integer.class).get();
-        User user=userDao.queryBuilder().where().eq("fname",login).queryForFirst();
+        Integer size=ctx.pathParam(SIZE,Integer.class).get();
+        User user=userDao.queryBuilder().where().eq(F_NAME,login).queryForFirst();
         if(service.lastSessionTimeGetter(user.getId(),localDateNow)==null){
             ctx.result(objectMapper.writeValueAsString(service.MatchesFinder(user,size)));
         }
         else {
             LocalDate lastSession=service.lastSessionTimeGetter(user.getId(),localDateNow);
             if(localDateNow==lastSession){
-                ctx.result("COOL_DOWN BRO");
+                ctx.result(COOL_DOWN_SIGN);
             }
             else if(localDateNow.getYear()==lastSession.getYear()){
                 if(localDateNow.getDayOfYear()-lastSession.getDayOfYear()>=COOL_DOWN){
                     ctx.result(objectMapper.writeValueAsString(service.MatchesFinder(user,size)));
                 }
                 else {
-                    ctx.result("COOL_DOWN BRO");
+                    ctx.result(COOL_DOWN_SIGN);
                 }
             }
             else {
                 ctx.result(objectMapper.writeValueAsString(service.MatchesFinder(user,size)));
             }
         }
-        ctx.result(objectMapper.writeValueAsString(service.MatchesFinder(user,size)));
+
     }
 
     @Override

@@ -76,7 +76,7 @@ public class Main {
 //                DaoManager.createDao(configuration.connectionSource(),User.class));
         Dao<User,Integer> userDao=DaoManager.createDao(configuration.connectionSource(),User.class);
         Controller<Meme, Integer> memeController = new MemeController(memeService, objectMapper,userDao,userService);
-        MemeReviewController memeReviewController = new MemeReviewController(memeReviewService,objectMapper,userDao);
+        MemeReviewController memeReviewController = new MemeReviewController(memeReviewService,objectMapper,userDao,userService);
         UserInteractionController userInteractionController = new UserInteractionController(userInteractionService, objectMapper,DaoManager.createDao(configuration.connectionSource(),User.class),userService);
         UserController userController= new UserController(userService, objectMapper,DaoManager.createDao(configuration.connectionSource(),Meme.class),
                DaoManager.createDao(configuration.connectionSource(),User.class),reactionOperations);
