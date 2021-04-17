@@ -21,6 +21,7 @@ public class UserInteractionController extends AuthorizedController<UserInteract
     String SIZE="size";
     String F_NAME="fname";
     String COOL_DOWN_SIGN="COOL DOWN";
+    int TWENTY=20;
     public UserInteractionController(Service<UserInteraction, Integer> service, ObjectMapper objectMapper,
                                      Dao<User,Integer> userDao,Service<User, Integer> userService) {
         super(service, objectMapper, UserInteraction.class,userDao);
@@ -34,6 +35,9 @@ public class UserInteractionController extends AuthorizedController<UserInteract
         String password=ctx.basicAuthCredentials().getPassword();
         LocalDate localDateNow=LocalDate.now();
         Integer size=ctx.pathParam(SIZE,Integer.class).get();
+        if(size>TWENTY){
+            size=TWENTY;
+        }
         User user=userDao.queryBuilder().where().eq(F_NAME,login).queryForFirst();
         if(service.lastSessionTimeGetter(user.getId(),localDateNow)==null){
             ctx.result(objectMapper.writeValueAsString(service.MatchesFinder(user,size)));

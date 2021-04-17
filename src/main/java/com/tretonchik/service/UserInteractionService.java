@@ -4,7 +4,6 @@ import com.tretonchik.models.Meme;
 import com.tretonchik.models.MemeReview;
 import com.tretonchik.models.User;
 import com.tretonchik.models.UserInteraction;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
