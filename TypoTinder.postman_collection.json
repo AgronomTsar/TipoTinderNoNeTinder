@@ -1,0 +1,358 @@
+{
+	"info": {
+		"_postman_id": "a84cd9d6-ac69-4535-9386-be6472fd7189",
+		"name": "TypoTinder",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost:8080/users",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":10001,\r\n    \"fname\":\"Legolas\",\r\n    \"lname\":\"Ohoto\",\r\n    \"sex\":\"Male\",\r\n    \"country\":\"Kazakhstan\",\r\n    \"city\":\"Almaty\",\r\n    \"phone\":\"+87018694695\",\r\n    \"date\":\"10-11-2011\",\r\n    \"birthday\":\"10-11-1999\",\r\n    \"password\":\"pendalfLog\",\r\n    \"role\":\"ADMIN\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/users",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/userInteraction/10",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "Femalefname5",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "Guss5",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/userInteraction/10",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"userInteraction",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/meme/5",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "Femalefname1",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "Guss1",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/meme/5",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"meme",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/userInteraction",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "Malefname8",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "Guss8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":1,\r\n    \"source\":8,\r\n    \"target\":1,\r\n    \"reaction\":\"LIKED\",\r\n    \"date\":\"08-04-2021\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/userInteraction",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"userInteraction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/meme",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "Malefname8",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "Guss8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":10000,\r\n    \"link\":\"http/fsdfsfsfsdfds\",\r\n    \"date\":\"08-04-2021\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/meme",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"meme"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/users/4",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "Malefname4",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "Guss4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/users/4",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/memeReview",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "Guss4",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "Malefname4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":201,\r\n    \"user\":4,\r\n    \"meme\":1,\r\n    \"date\":\"08-04-2021\",\r\n    \"rate\":\"LIKED\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/memeReview",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"memeReview"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/users/1",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "Guss1",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "Femalefname",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/users/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/users",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "Legolas",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pendalfLog",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/users",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
