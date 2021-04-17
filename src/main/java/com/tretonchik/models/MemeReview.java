@@ -8,6 +8,7 @@ import com.tretonchik.service.Reactions;
 import java.time.LocalDate;
 import java.util.Objects;
 
+
 @DatabaseTable(tableName="MemeReview")
 public class MemeReview implements Model<Integer> {
     @DatabaseField(columnName = "id",id=true)
